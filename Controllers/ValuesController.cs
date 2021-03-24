@@ -1,6 +1,8 @@
 ﻿using backend.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
@@ -113,6 +115,43 @@ namespace backend.Controllers
             return Ok(databaseName);
         }
 
+        [HttpGet]
+
+        public IHttpActionResult ExcQuery()
+        {
+           
+            try
+            {
+                ArrayList aa = new ArrayList();
+                string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=Ecomerce;Integrated Security=True;User ID=sa;Password=l23";
+                SqlConnection con = new SqlConnection(connectionString);
+                con.Open();
+                SqlCommand cmd = new SqlCommand("select * from Product", con);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                int a = dt.Rows.Count;
+                for (int i = 0; i < a; i++)
+                {
+                    var r = dt.Rows[i].Table;
+                    aa.Add(r);
+                    Console.WriteLine(dt.Rows[i].ItemArray[0].ToString());  // acess data from r array
+
+                    IDictionary<string, string> dict = new Dictionary<string, string>();
+                    dict.Add("pr", dt.Rows[i]["Product_Name"].ToString());
+                    var r1 = dt.Rows[i]["Product_Name"].ToString();// accces using column name
+                   
+                }
+
+                con.Close();
+
+                return Ok(aa);
+} catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+             }
+        }
+   
         // POST api/values
         [HttpPost]
         public IHttpActionResult Post(Students c)
