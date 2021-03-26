@@ -24,9 +24,12 @@ namespace backend.Controllers
 
 
         }
-        [HttpPost]
-        public IHttpActionResult Login(Students c)
+        [HttpGet]
+        public IHttpActionResult Login(string userName,string password)
         {
+            Students c = new Students();
+            c.UserName = userName;
+            c.U_Password = password;
             Boolean b = false;
             try
             {
@@ -117,24 +120,25 @@ namespace backend.Controllers
 
         [HttpGet]
 
-        public IHttpActionResult ExcQuery()
+        public IHttpActionResult ExcQuery(string query, string Table)
         {
            
             try
             {
                 ArrayList aa = new ArrayList();
-                string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=Ecomerce;Integrated Security=True;User ID=sa;Password=l23";
+                string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog='" + Table + "';Integrated Security=True;User ID=sa;Password=l23";
                 SqlConnection con = new SqlConnection(connectionString);
                 con.Open();
-                SqlCommand cmd = new SqlCommand("select * from Product", con);
+                SqlCommand cmd = new SqlCommand(query, con);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 int a = dt.Rows.Count;
+
+                var r = dt.Rows[0].Table;
+                aa.Add(r);
                 for (int i = 0; i < a; i++)
                 {
-                    var r = dt.Rows[i].Table;
-                    aa.Add(r);
                     Console.WriteLine(dt.Rows[i].ItemArray[0].ToString());  // acess data from r array
 
                     IDictionary<string, string> dict = new Dictionary<string, string>();
@@ -152,6 +156,26 @@ namespace backend.Controllers
              }
         }
    
+
+        [HttpGet]
+        public IHttpActionResult ex()
+        {
+            int c = 3;
+            string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=Ecomerce;Integrated Security=True;User ID=sa;Password=l23";
+            SqlConnection con = new SqlConnection(connectionString);
+            SqlCommand cmd = new SqlCommand("select ProductID,Product_Name,Quantity from Product", con);
+            con.Open();
+            SqlDataReader sdr = cmd.ExecuteReader();
+            while (sdr.Read())
+            {
+                string s1 = sdr[0].ToString();
+                string s2 = sdr[1].ToString();
+                string s3 = sdr[2].ToString();
+
+            }
+            con.Close();
+            return Ok();
+        }
         // POST api/values
         [HttpPost]
         public IHttpActionResult Post(Students c)
