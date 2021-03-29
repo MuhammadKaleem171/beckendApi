@@ -134,18 +134,8 @@ namespace backend.Controllers
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 int a = dt.Rows.Count;
-
                 var r = dt.Rows[0].Table;
                 aa.Add(r);
-                for (int i = 0; i < a; i++)
-                {
-                    Console.WriteLine(dt.Rows[i].ItemArray[0].ToString());  // acess data from r array
-
-                    IDictionary<string, string> dict = new Dictionary<string, string>();
-                    dict.Add("pr", dt.Rows[i]["Product_Name"].ToString());
-                    var r1 = dt.Rows[i]["Product_Name"].ToString();// accces using column name
-                   
-                }
 
                 con.Close();
 
