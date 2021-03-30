@@ -148,23 +148,24 @@ namespace backend.Controllers
    
 
         [HttpGet]
-        public IHttpActionResult ex()
+        public IHttpActionResult SaveQuery(string UserName)
         {
-            int c = 3;
-            string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=Ecomerce;Integrated Security=True;User ID=sa;Password=l23";
-            SqlConnection con = new SqlConnection(connectionString);
-            SqlCommand cmd = new SqlCommand("select ProductID,Product_Name,Quantity from Product", con);
-            con.Open();
-            SqlDataReader sdr = cmd.ExecuteReader();
-            while (sdr.Read())
+            try
             {
-                string s1 = sdr[0].ToString();
-                string s2 = sdr[1].ToString();
-                string s3 = sdr[2].ToString();
+                SaveQuery qss = new SaveQuery();
+              var qs= qss.GetSave_Query(UserName).ToList();
+                foreach( var i in qs)
+                {
+                    Console.WriteLine(i);
+                }
+                return Ok(qs.ToList());
 
             }
-            con.Close();
-            return Ok();
+            catch(Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+          
         }
         // POST api/values
         [HttpPost]
