@@ -182,6 +182,24 @@ namespace backend.Controllers
                 return BadRequest(ex.ToString());
             }
         }
+        [HttpPost]
+        public IHttpActionResult PostQuery(SaveQuery q)
+        {
+            try
+            {
+                SaveQuery qs = new SaveQuery();
+                qs.UserName = "17-arid-3460";
+                qs.Query_Name = q.Query_Name;
+                qs.Query = q.Query;
+                qs.DatabaseName = q.DatabaseName;
+                qs.insertQuery(qs);
+                return Ok("Successfull");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
 
         // PUT api/values/5
         public void Put(int id, [FromBody]string value)

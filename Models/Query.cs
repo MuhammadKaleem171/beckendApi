@@ -11,14 +11,15 @@ namespace backend.Models
     {
       public  string DatabaseName { get; set; }
       public   string Query_Name { get; set; }
+        public string UserName { get; set; }
        public string Query { get; set; }
-
+        static string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=fyp;Integrated Security=True;User ID=sa;Password=l23";
+        SqlConnection con = new SqlConnection(connectionString);
         public List<SaveQuery> GetSave_Query(string UserName)
 
         {
              List<SaveQuery>qs = new List<SaveQuery>();
-            string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=fyp;Integrated Security=True;User ID=sa;Password=l23";
-            SqlConnection con = new SqlConnection(connectionString);
+           
             con.Open();
             SqlCommand cmd = new SqlCommand("select * from SaveQuery where UserName='"+UserName+"'", con);
             SqlDataReader sdr = cmd.ExecuteReader();
@@ -36,6 +37,21 @@ namespace backend.Models
 
         }
 
+        public string insertQuery(SaveQuery qs)
+        {
+            try
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand("insert into SaveQuery (Query,DatabaseName,UserName,Query_Name) values ('" + qs.Query + "','" + qs.DatabaseName + "','" + qs.UserName +" ','" + qs.Query_Name + "')", con);
+                cmd.ExecuteNonQuery();
+                con.Close();
+
+                return "success";
+            }catch(Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
 
     }  
 }
