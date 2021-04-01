@@ -90,12 +90,12 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        public IHttpActionResult GetTableColumn(string table)
+        public IHttpActionResult GetTableColumn(string table,string DatabaseName)
         {
 
             List<ColumnName> databaseName = new List<ColumnName>();
             int id = 1;
-            string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=Ecomerce;Integrated Security=True;User ID=sa;Password=l23";
+            string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog='" + DatabaseName + "';Integrated Security=True;User ID=sa;Password=l23";
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
