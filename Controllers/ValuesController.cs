@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Microsoft.AspNetCore.Http;
+using System.Web;
 
 namespace backend.Controllers
 {
@@ -200,7 +202,7 @@ namespace backend.Controllers
                 return BadRequest(ex.ToString());
             }
         }
-
+       
         // PUT api/values/5
         public void Put(int id, [FromBody]string value)
         {
