@@ -25,11 +25,13 @@ public string insert(AssignmentUpload up)
             {
                 string Date = DateTime.Now.ToShortDateString();
                 con.Open();
-               string q= "insert into UploadAssignment (T_id,ClassID,AssignmtNo,AssignmentFile,DateOfSubmission) values (@T_id, @ClassID,@AssignmtNo,@AssignmentFile, @Date)";
+               string q= "insert into UploadAssignment (T_id,ClassID,AssignmtNo,AssignmentName,AssignmentFile,DateOfSubmission) values (@T_id, @ClassID,@AssignmtNo,@assName,@AssignmentFile, @Date)";
                 SqlCommand cmd = new SqlCommand(q, con);
                 cmd.Parameters.AddWithValue("@T_id", up.T_id);
                 cmd.Parameters.AddWithValue("@ClassID", up.ClassID);
                 cmd.Parameters.AddWithValue("@AssignmtNo", up.AssignmtNo);
+                cmd.Parameters.AddWithValue("@assName", up.AssignmentName);
+
                 cmd.Parameters.AddWithValue("@AssignmentFile", up.AssignmentFile);
 
                 cmd.Parameters.AddWithValue("@Date", Date);

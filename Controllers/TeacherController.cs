@@ -21,13 +21,20 @@ namespace backend.Controllers
 
         [HttpPost]
         
-        public void PostAssignment(AssignmentUpload p)
+        public string PostAssignment(AssignmentUpload p)
         {
             AssignmentUpload up = new AssignmentUpload();
-            p.AssignmentFile = System.Convert.FromBase64String(p.ss);
+            try
+            {
+                p.AssignmentFile = System.Convert.FromBase64String(p.ss);
 
 
-            string s=up.insert(p);
+                string s = up.insert(p);
+                return s;
+            }catch(Exception ex)
+            {
+                return ex.ToString();
+            }
 
         }
 
