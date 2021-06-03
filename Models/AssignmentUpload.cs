@@ -48,20 +48,21 @@ public string insert(AssignmentUpload up)
             }
         }
 
-        public void gets()
+        public AssignmentUpload gets( int AssignmentNO)
         {
             con.Open();
             AssignmentUpload up = new AssignmentUpload();
-            SqlCommand cmd = new SqlCommand("select AssignmentFile from UploadAssignment where AssignmentID=" + 9 + "", con);
+            SqlCommand cmd = new SqlCommand("select * from UploadAssignment where AssignmtNo=" + AssignmentNO + "", con);
             SqlDataReader sdr = cmd.ExecuteReader();
             while (sdr.Read())
             {
-
+                up.AssignmentName = sdr["AssignmentName"].ToString();
                 up.AssignmentFile = (byte[])sdr["AssignmentFile"];
-               string temp_backToBytes = Convert.ToBase64String(up.AssignmentFile);
-
+                up.ss = Convert.ToBase64String(up.AssignmentFile);
             }
+           
             con.Close();
+            return up;
         }
 
 

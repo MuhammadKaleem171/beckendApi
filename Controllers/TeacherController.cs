@@ -13,10 +13,17 @@ namespace backend.Controllers
 
 
         // GET: api/Teacher/5
-        public void Get()
+        public AssignmentUpload Get(int AssignmentNO)
         {
-            AssignmentUpload p = new AssignmentUpload();
-            p.gets();
+            try
+            {
+                AssignmentUpload p = new AssignmentUpload();
+                p=p.gets(AssignmentNO);
+                return p;
+            }catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         [HttpPost]
