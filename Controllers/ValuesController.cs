@@ -202,7 +202,32 @@ namespace backend.Controllers
                 return BadRequest(ex.ToString());
             }
         }
-       
+       [HttpGet]
+        public void Test()
+        {
+            string d = "";
+            string query = "create table ##tempTable( productId int , productName varchar(max));";
+            query += "insert into ##tempTable(productId,productName)select[ProductID],[Product_Name]from Product;";
+            query += "update ##tempTable set productName='sumsung' where productId=1";
+            string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=Ecomerce;Integrated Security=True;User ID=sa;Password=l23";
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        d=dr.RecordsAffected.ToString();
+                        while (dr.Read())
+                        {
+                           
+                        }
+                    }
+                }
+
+            }
+            Console.WriteLine(d);
+        }
         // PUT api/values/5
         public void Put(int id, [FromBody]string value)
         {
