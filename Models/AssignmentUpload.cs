@@ -57,21 +57,27 @@ namespace backend.Models
 
         public AssignmentUpload gets(int AssignmentNO)
         {
-            con.Open();
-            AssignmentUpload up = new AssignmentUpload();
-            SqlCommand cmd = new SqlCommand("select * from UploadAssignment where AssignmtNo=" + AssignmentNO + "", con);
-            SqlDataReader sdr = cmd.ExecuteReader();
-            while (sdr.Read())
+            try
             {
-                up.AssignmentName = sdr["AssignmentName"].ToString();
-                up.AssignmentFile = (byte[])sdr["AssignmentFile"];
-                up.ss = Convert.ToBase64String(up.AssignmentFile);
-                up.AssignmtNo = int.Parse(sdr["AssignmtNo"].ToString());
-                up.AssignmentID = int.Parse(sdr["AssignmentID"].ToString());
-            }
+                con.Open();
+                AssignmentUpload up = new AssignmentUpload();
+                SqlCommand cmd = new SqlCommand("select * from UploadAssignment where LessonNO=" + AssignmentNO + "", con);
+                SqlDataReader sdr = cmd.ExecuteReader();
+                while (sdr.Read())
+                {
+                    up.AssignmentName= sdr["AssignmentName"].ToString();
+                    up.AssignmentFile = (byte[])sdr["AssignmentFile"];
+                    up.ss = Convert.ToBase64String(up.AssignmentFile);
+                    up.LessonNo = int.Parse(sdr["LessonNO"].ToString());
+                    up.AssignmentID = int.Parse(sdr["AssignmentID"].ToString());
+                }
 
-            con.Close();
-            return up;
+                con.Close();
+                return up;
+            }catch(Exception ex)
+            {
+                return null;
+            }
 
         }
         public List<AssignmentUpload> getListOfstudents(int lessonNo)
