@@ -10,6 +10,9 @@ using System.Net.Http;
 using System.Web.Http;
 using Microsoft.AspNetCore.Http;
 using System.Web;
+using System.IO;
+using Microsoft.Extensions;
+using HttpContext = System.Web.HttpContext;
 
 namespace backend.Controllers
 {
@@ -32,11 +35,11 @@ namespace backend.Controllers
             Students c = new Students();
             c.UserName = userName;
             c.U_Password = password;
-            Boolean b = false;
+           
             try
             {
-               b= c.LoginData(c);
-                return Ok(b);
+               Students stu= c.LoginData(c);
+                return Ok(stu);
             }catch(Exception ex)
             {
                 return BadRequest(ex.ToString());
@@ -202,31 +205,132 @@ namespace backend.Controllers
                 return BadRequest(ex.ToString());
             }
         }
-       [HttpGet]
-        public void Test()
+
+       [HttpPost]
+        public IHttpActionResult UpdateQueryExecute( UpdateDTO model)
         {
-            string d = "";
-            string query = "create table ##tempTable( productId int , productName varchar(max));";
-            query += "insert into ##tempTable(productId,productName)select[ProductID],[Product_Name]from Product;";
-            query += "update ##tempTable set productName='sumsung' where productId=1";
-            string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=Ecomerce;Integrated Security=True;User ID=sa;Password=l23";
-            using (SqlConnection con = new SqlConnection(connectionString))
+            try
             {
-                con.Open();
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                string TempTable = "User" + DateTime.Now.Millisecond.ToString();
+                ArrayList aa = new ArrayList();
+                string d = "";
+                string query = "select * into " + TempTable + "  from " + model.TableName;
+                //query+= "Update " + TempTable+" " + model.Query;
+                // query += "update ##tempTable set productName='sumsung' where productId=1";
+                string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=Ecomerce;Integrated Security=True;User ID=sa;Password=l23";
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        d=dr.RecordsAffected.ToString();
-                        while (dr.Read())
-                        {
-                           
-                        }
+                        int c = cmd.ExecuteNonQuery();
+                    }
+                    //update query
+                    string q = "Update " + TempTable + " " + model.Query;
+                    using (SqlCommand cmd = new SqlCommand(q, con))
+                    {
+                        int c = cmd.ExecuteNonQuery();
+
+                    }
+
+                    q = "select * from " + TempTable;
+
+                    using (SqlCommand cmd = new SqlCommand(q, con))
+                    {
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        int a = dt.Rows.Count;
+                        var r = dt.Rows[0].Table;
+                        aa.Add(r);
+                    }
+                    string drop = "drop table " + TempTable;
+                    using (SqlCommand cmd = new SqlCommand(drop, con))
+                    {
+                        cmd.ExecuteNonQuery();
                     }
                 }
-
+                return Ok(aa);
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.ToString());
             }
-            Console.WriteLine(d);
+        }
+        [HttpPost]
+        public IHttpActionResult receiveFile()
+        {
+            try
+            {
+              
+                var httprequest = HttpContext.Current.Request;
+                var f = httprequest.Files[0];
+
+                var fileName = f.FileName;
+                var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+                var fileExtension = f.ContentType;
+                var newFileName = String.Concat(myUniqueFileName, fileName);
+  
+                string path = Path.Combine(HttpContext.Current.Server.MapPath("~/Resource/SqlFiles"),newFileName);
+                f.SaveAs(path);
+                //read file
+                FileInfo file = new FileInfo(path);
+                //
+                int flag = Savepath(fileName, path);
+
+                var script = file.OpenText().ReadToEnd();
+
+                var sqlqueries = script.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
+                string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=fyp;Integrated Security=True;User ID=sa;Password=l23";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand("query", con))
+                    {
+                        foreach (var query in sqlqueries)
+                        {
+                            cmd.CommandText = query;
+  
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        con.Close();
+                    }
+
+
+                }
+
+                return Ok();
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+
+        }
+
+        public int Savepath(string filename,string path)
+        {
+            try
+            {
+                string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=fyp;Integrated Security=True;User ID=sa;Password=l23";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand("query", con))
+                    {
+                        cmd.CommandText = "insert into DatabaseLog ([DatabaseName],[DatabasePath]) values('" + filename + "','" + path + "')";
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                  }
+
+                return 1;
+            }catch(Exception ex)
+            {
+                return -1;
+            }
+
         }
         // PUT api/values/5
         public void Put(int id, [FromBody]string value)

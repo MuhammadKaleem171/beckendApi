@@ -11,12 +11,14 @@ namespace backend.Models
     {
         public int AssignmentID { get; set; }
         public string T_id { get; set; }
+        public string U_Password { get; set; }
         public int ClassID { get; set; }
         public int AssignmtNo { get; set; }
         public string AssignmentName { get; set; }
         public byte[] AssignmentFile { get; set; }
         public string DatabaseName { get; set; }
         public int LessonNo { get; set; }
+        public int Marks { get; set; }
 
         public string UserName { get; set; }
         public DateTime DateOFUpload { get; set; }
@@ -45,9 +47,7 @@ namespace backend.Models
                 cmd.ExecuteNonQuery();
                 con.Close();
 
-
-
-                return "succesfull ";
+                        return "succesfull ";
             }
             catch (Exception ex)
             {
@@ -70,6 +70,7 @@ namespace backend.Models
                     up.ss = Convert.ToBase64String(up.AssignmentFile);
                     up.LessonNo = int.Parse(sdr["LessonNO"].ToString());
                     up.AssignmentID = int.Parse(sdr["AssignmentID"].ToString());
+                   
                 }
 
                 con.Close();
@@ -106,8 +107,26 @@ namespace backend.Models
             }
 
         }
+        public bool TeacherLogin(AssignmentUpload c)
+        {
+            con.Open();
+            string q = "select * from[fyp].[dbo].[Teacher] where T_id ='" + c.T_id + "' and U_Password='" + c.U_Password + "'";
+            string p = q;
+            SqlCommand cmd = new SqlCommand(q, con);
+            SqlDataReader sdr = cmd.ExecuteReader();
+            
+            if (sdr.Read())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
 
-       
+        }
+
+
 
     }
 }

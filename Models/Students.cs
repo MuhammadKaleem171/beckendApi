@@ -11,9 +11,9 @@ namespace backend.Models
     {
         static string con = ConfigurationManager.ConnectionStrings["backend.Properties.Settings.ConnectionString"].ConnectionString;
         SqlConnection conn = new SqlConnection(con);
-        public String UserName { get; set; }
-        public String U_Password { get; set; }
-
+        public string UserName { get; set; }
+        public string U_Password { get; set; }
+        public int ClassID { get; set; }
         public List<Students> GetRecordss()
         {
 
@@ -47,24 +47,47 @@ namespace backend.Models
             conn.Close();
         }
 
-        public bool LoginData( Students c)
+        public Students LoginData( Students c)
         {
             conn.Open();
             string q = "select * from[fyp].[dbo].[Students] where UserName='" +c.UserName + "' and U_Password='" + c.U_Password + "'";
             string p = q;
             SqlCommand cmd = new SqlCommand(q, conn);
             SqlDataReader sdr = cmd.ExecuteReader();
-
-            if (sdr.Read() == true)
+            Students stu = new Students();
+            if (sdr.Read() )
             {
-                return true;
+                stu.UserName = sdr["UserName"].ToString();
+                stu.U_Password = sdr["U_Password"].ToString();
+                stu.ClassID = int.Parse(sdr["ClassID"].ToString());
+                return stu;
             }
             else
             {
-                return false;
+                return null;
             }
     
             }
+
+        public List<DatabaseLog> GetDatabaseLogs()
+        {
+            List<DatabaseLog> dblist = new List<DatabaseLog>()
+;            conn.Open();
+            string q = "select * from[fyp].[dbo].[DatabaseLog]";
+            SqlCommand cmd = new SqlCommand(q, conn);
+            SqlDataReader sdr = cmd.ExecuteReader();
+
+            while (sdr.Read())
+            {
+                DatabaseLog db = new DatabaseLog();
+                db.DatabaseName = sdr[1].ToString();
+                db.DatabasePath= sdr[2].ToString();
+                 dblist.Add(db);
+            }
+                return dblist;
+        }
+
+    
 
   
         

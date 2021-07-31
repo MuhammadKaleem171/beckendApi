@@ -17,6 +17,21 @@ namespace backend.Controllers
         static string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=fyp;Integrated Security=True;User ID=sa;Password=l23";
         SqlConnection con = new SqlConnection(connectionString);
 
+        [HttpPost]
+        public IHttpActionResult Login(AssignmentUpload c)
+        {
+  
+
+            try
+            {
+                bool b =c.TeacherLogin(c);
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
         // GET: api/Teacher/5
         public AssignmentUpload Get(int AssignmentNO)
         {

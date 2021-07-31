@@ -16,6 +16,8 @@ namespace backend.Models
         public string QuestionNo { get; set; }
         public string Answer { get; set; }
         public string DatabaseName { get; set; }
+        public int LessonNo { get; set; }
+        public int Marks { get; set; }
 
         public string base64 { get; set; }
         static string connectionString = @"Data Source=MALIKKALEEM\SQLEXPRESS01;Initial Catalog=fyp;Integrated Security=True;User ID=sa;Password=l23";
@@ -28,12 +30,20 @@ namespace backend.Models
             try
             {
           con.Open();
-      string q = "insert into StudentAssignment (UserName,AssignmentID,classID,AssignmentFile) values (@User,@assID, @ClassID,@AssignmentFile)";
+      string q = "insert into StudentAssignment (UserName,AssignmentID,classID,DatabaseName,QuestionNo,Answer,LessonNo)" +
+                    " values (@User,@assID, @ClassID,@DatabaseName,@QuestionNo,@Answer,@LessonNo)";
                 SqlCommand cmd = new SqlCommand(q, con);
                 cmd.Parameters.AddWithValue("@User", sp.UserName);
                 cmd.Parameters.AddWithValue("@assID", sp.AssignmentID);
                 cmd.Parameters.AddWithValue("@ClassID", sp.classID);
-                cmd.Parameters.AddWithValue("@AssignmentFile", sp.AssignmentFile);
+                cmd.Parameters.AddWithValue("@DatabaseName", sp.DatabaseName);
+                cmd.Parameters.AddWithValue("@QuestionNo", sp.QuestionNo);
+                cmd.Parameters.AddWithValue("@Answer", sp.Answer);
+                cmd.Parameters.AddWithValue("@LessonNo", sp.LessonNo);
+
+
+
+
 
                 cmd.ExecuteNonQuery();
                 con.Close();
